@@ -36,14 +36,13 @@ ADD https://ftp.postgresql.org/pub/source/v$PG_VERSION/postgresql-$PG_VERSION.ta
 RUN tar -xvjf /tmp/postgresql-$PG_VERSION.tar.bz2 -C /usr/src
 
 # Patch: allow running as root (required for unikernel single-process env)
-RUN set -e; \
-    cd /usr/src/postgresql-$PG_VERSION; \
+# PG 18 moves root checks behind #ifndef WIN32 blocks; scope sed to those blocks
+RUN cd /usr/src/postgresql-$PG_VERSION && \
     sed -i 's|if (do_check_root)|//if (do_check_root)|' src/backend/main/main.c; \
     sed -i 's|check_root(progname);|//check_root(progname);|' src/backend/main/main.c; \
-    sed -i '/geteuid() == 0.*root.*uid/,/exit(1);/{s|^|//|}' src/bin/initdb/initdb.c; \
-    sed -i '/geteuid() == 0/{N;N;N;N;N;N;N;s|^|//|;s|\n|\n//|g}' src/bin/pg_ctl/pg_ctl.c; \
-    sed -i '/geteuid() == 0/{N;N;N;N;N;s|^|//|;s|\n|\n//|g}' src/bin/pg_resetwal/pg_resetwal.c; \
-    sed -i '/geteuid() == 0/{N;N;N;N;N;s|^|//|;s|\n|\n//|g}' src/bin/pg_rewind/pg_rewind.c
+    for f in initdb pg_ctl pg_resetwal pg_rewind; do \
+        sed -i '/#ifndef WIN32/,/#endif/{ /geteuid() == 0/,/exit(1);/s|.*|//&|; }' src/bin/$f/$f.c; \
+    done
 
 RUN set -e; \
     cd /usr/src/postgresql-$PG_VERSION; \
