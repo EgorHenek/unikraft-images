@@ -16,7 +16,7 @@ jobs:
 
       - name: Install Unikraft CLI
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://get.unikraft.com | sh
+          curl -sL https://github.com/unikraft/cli/releases/latest/download/unikraft-cli_0.3.0_linux_amd64.tar.gz | tar xz -C /usr/local/bin unikraft
           unikraft version
 
       - name: Login to Unikraft Cloud
