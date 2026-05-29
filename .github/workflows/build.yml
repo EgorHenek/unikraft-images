@@ -1,0 +1,36 @@
+name: Build Unikraft Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Image directory to build (e.g. postgres18)'
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Unikraft CLI
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://get.unikraft.com | sh
+          unikraft version
+
+      - name: Login to Unikraft Cloud
+        run: echo "${{ secrets.UNIKRAFT_TOKEN }}" | unikraft login --token -
+
+      - name: Build image
+        working-directory: ${{ inputs.image }}
+        run: |
+          case "${{ inputs.image }}" in
+            postgres18)
+              unikraft build . --output egorhenek/postgres:18
+              ;;
+            *)
+              echo "Unknown image: ${{ inputs.image }}"
+              exit 1
+              ;;
+          esac

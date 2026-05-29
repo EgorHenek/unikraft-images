@@ -1,0 +1,6 @@
+spec: v0.7
+runtime: base-compat:latest
+rootfs:
+  source: ./Dockerfile
+  format: erofs
+cmd: ["/usr/local/bin/wrapper.sh", "postgres", "-c", "shared_preload_libraries='pg_ukc_scaletozero'"]
