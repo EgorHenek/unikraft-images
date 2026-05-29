@@ -37,8 +37,10 @@ RUN tar -xvjf /tmp/postgresql-$PG_VERSION.tar.bz2 -C /usr/src
 
 # Patch: allow running as root (required for unikernel single-process env)
 COPY allow-root.patch /usr/src/allow-root.patch
-RUN cd /usr/src/postgresql-$PG_VERSION && \
-    git init && git add -A && git commit -m base && \
+RUN set -e; \
+    cd /usr/src/postgresql-$PG_VERSION && \
+    git init && git config user.email builder@unikraft && git config user.name Builder && \
+    git add -A && git commit -m base && \
     git apply /usr/src/allow-root.patch
 
 RUN set -e; \
