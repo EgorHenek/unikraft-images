@@ -61,21 +61,23 @@ RUN set -e; \
         --with-libxslt \
         --with-lz4 \
     ; \
-    make -j "$(nproc)" world-bin; \
-    make install-world-bin DESTDIR=/usr/src/postgresql/dist; \
+    make -j "$(nproc)" world-bin && \
+    make install-world-bin DESTDIR=/usr/src/postgresql/dist && \
     make install
 
-# Build pg_ukc_scaletozero plugin
-ADD https://github.com/unikraft-cloud/pg_ukc_scaletozero/archive/refs/heads/stable.zip /tmp/pg_ukc_scaletozero.zip
-RUN mkdir /usr/src/pg_ukc_scaletozero; \
-    unzip /tmp/pg_ukc_scaletozero.zip -d /tmp/extract; \
-    mv /tmp/extract/pg_ukc_scaletozero-*/* /usr/src/pg_ukc_scaletozero
-
-RUN cd /usr/src/pg_ukc_scaletozero && \
-    export PATH="/usr/local/bin:$PATH" && \
-    export CFLAGS="-O2" && \
-    make && \
-    make install DESTDIR=/usr/src/postgresql/dist
+# TODO: pg_ukc_scaletozero needs update for PG 18 ExecutorRun API change
+# (ExecutorRun_hook_type signature changed — now 4 args, plugin expects 5)
+# Build pg_ukc_scaletozero plugin (disabled until upstream fixes PG 18 compat)
+# ADD https://github.com/unikraft-cloud/pg_ukc_scaletozero/archive/refs/heads/stable.zip /tmp/pg_ukc_scaletozero.zip
+# RUN mkdir /usr/src/pg_ukc_scaletozero; \
+#     unzip /tmp/pg_ukc_scaletozero.zip -d /tmp/extract; \
+#     mv /tmp/extract/pg_ukc_scaletozero-*/* /usr/src/pg_ukc_scaletozero
+# 
+# RUN cd /usr/src/pg_ukc_scaletozero && \
+#     export PATH="/usr/local/bin:$PATH" && \
+#     export CFLAGS="-O2" && \
+#     make && \
+#     make install DESTDIR=/usr/src/postgresql/dist
 
 ##
 ## Retrieve dependencies
