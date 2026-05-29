@@ -41,7 +41,7 @@ RUN cd /usr/src/postgresql-$PG_VERSION && \
     sed -i 's|if (do_check_root)|//if (do_check_root)|' src/backend/main/main.c; \
     sed -i 's|check_root(progname);|//check_root(progname);|' src/backend/main/main.c; \
     for f in initdb pg_ctl pg_resetwal pg_rewind; do \
-        sed -i '/#ifndef WIN32/,/#endif/{ /geteuid() == 0/,/exit(1);/s|.*|//&|; }' src/bin/$f/$f.c; \
+        sed -i '/#ifndef WIN32/,/#endif/{ /geteuid() == 0/,/exit(1)/s|.*|//&|; }' src/bin/$f/$f.c; \
     done
 
 RUN set -e; \
