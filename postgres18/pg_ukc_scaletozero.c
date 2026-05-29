@@ -19,7 +19,7 @@
 PG_MODULE_MAGIC;
 
 static ExecutorRun_hook_type onExecutorRunPrev;
-
+static void onExecutorRun(QueryDesc *queryDesc, ScanDirection direction, uint64 count);
 static int disable_stz_fd = -1;
 
 void _PG_init(void);
