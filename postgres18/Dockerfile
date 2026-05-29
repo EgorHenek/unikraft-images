@@ -41,7 +41,7 @@ RUN set -e; \
     cd /usr/src/postgresql-$PG_VERSION && \
     git init && git config user.email builder@unikraft && git config user.name Builder && \
     git add -A && git commit -m base && \
-    git apply /usr/src/allow-root.patch
+    git apply -p0 /usr/src/allow-root.patch
 
 RUN set -e; \
     cd /usr/src/postgresql-$PG_VERSION; \
