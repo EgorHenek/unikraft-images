@@ -1,0 +1,106 @@
+--- ../postgresql-18.4.orig/src/backend/main/main.c	2026-05-12 00:44:35
++++ src/backend/main/main.c	2026-05-29 16:17:49
+@@ -191,8 +191,7 @@
+ 	 * Make sure we are not running as root, unless it's safe for the selected
+ 	 * option.
+ 	 */
+-	if (do_check_root)
+-		check_root(progname);
++	// root check disabled for unikernel
+ 
+ 	/*
+ 	 * Dispatch to one of various subprograms depending on first argument.
+--- ../postgresql-18.4.orig/src/bin/initdb/initdb.c	2026-05-12 00:44:35
++++ src/bin/initdb/initdb.c	2026-05-29 16:17:49
+@@ -817,12 +817,12 @@
+ 	const char *username;
+ 
+ #ifndef WIN32
+-	if (geteuid() == 0)			/* 0 is root's uid */
+-	{
+-		pg_log_error("cannot be run as root");
+-		pg_log_error_hint("Please log in (using, e.g., \"su\") as the (unprivileged) user that will own the server process.");
+-		exit(1);
+-	}
++//	if (geteuid() == 0)			/* 0 is root's uid */
++//	{
++//		pg_log_error("cannot be run as root");
++//		pg_log_error_hint("Please log in (using, e.g., \"su\") as the (unprivileged) user that will own the server process.");
++//		exit(1);
++//	}
+ #endif
+ 
+ 	username = get_user_name_or_exit(progname);
+--- ../postgresql-18.4.orig/src/bin/pg_ctl/pg_ctl.c	2026-05-12 00:44:35
++++ src/bin/pg_ctl/pg_ctl.c	2026-05-29 16:17:49
+@@ -2254,15 +2254,15 @@
+ 	 * Disallow running as root, to forestall any possible security holes.
+ 	 */
+ #ifndef WIN32
+-	if (geteuid() == 0)
+-	{
+-		write_stderr(_("%s: cannot be run as root\n"
+-					   "Please log in (using, e.g., \"su\") as the "
+-					   "(unprivileged) user that will\n"
+-					   "own the server process.\n"),
+-					 progname);
+-		exit(1);
+-	}
++//	if (geteuid() == 0)
++//	{
++//		write_stderr(_("%s: cannot be run as root\n"
++//					   "Please log in (using, e.g., \"su\") as the "
++//					   "(unprivileged) user that will\n"
++//					   "own the server process.\n"),
++//					 progname);
++//		exit(1);
++//	}
+ #endif
+ 
+ 	env_wait = getenv("PGCTLTIMEOUT");
+--- ../postgresql-18.4.orig/src/bin/pg_resetwal/pg_resetwal.c	2026-05-12 00:44:35
++++ src/bin/pg_resetwal/pg_resetwal.c	2026-05-29 16:17:49
+@@ -359,13 +359,13 @@
+ 	 * the data directory.
+ 	 */
+ #ifndef WIN32
+-	if (geteuid() == 0)
+-	{
+-		pg_log_error("cannot be executed by \"root\"");
+-		pg_log_error_hint("You must run %s as the PostgreSQL superuser.",
+-						  progname);
+-		exit(1);
+-	}
++//	if (geteuid() == 0)
++//	{
++//		pg_log_error("cannot be executed by \"root\"");
++//		pg_log_error_hint("You must run %s as the PostgreSQL superuser.",
++//						  progname);
++//		exit(1);
++//	}
+ #endif
+ 
+ 	get_restricted_token();
+--- ../postgresql-18.4.orig/src/bin/pg_rewind/pg_rewind.c	2026-05-12 00:44:35
++++ src/bin/pg_rewind/pg_rewind.c	2026-05-29 16:17:49
+@@ -277,13 +277,13 @@
+ 	 * the data directory.
+ 	 */
+ #ifndef WIN32
+-	if (geteuid() == 0)
+-	{
+-		pg_log_error("cannot be executed by \"root\"");
+-		pg_log_error_hint("You must run %s as the PostgreSQL superuser.",
+-						  progname);
+-		exit(1);
+-	}
++//	if (geteuid() == 0)
++//	{
++//		pg_log_error("cannot be executed by \"root\"");
++//		pg_log_error_hint("You must run %s as the PostgreSQL superuser.",
++//						  progname);
++//		exit(1);
++//	}
+ #endif
+ 
+ 	get_restricted_token();
